@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body, html {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+
+        }
+
+        input, select {
+            margin-bottom: 15px;
+        }
+
+        .box {
+            width: 800px;
+            margin: auto;
+            background-color: #e5e5e5;
+            padding: 30px;
+        }
+
+        .a {
+            margin: 10px 0;
+            height: 35px;
+            border-top: 2px solid #ccc;
+            border-bottom: 2px solid #ccc;
+            line-height: 35px;
+        }
+
+        .a > a {
+            margin: 0 10px;
+            color: blue;
+        }
+
+        table {
+            width: 800px;
+        }
+
+        tr:nth-child(even) {
+            background-color: green;
+        }
+
+        tr:nth-child(odd) {
+            background-color: red;
+        }
+
+        td:nth-child(3) {
+            text-decoration: line-through;
+        }
+
+        td {
+            border: 1px solid red;
+            text-align: center;
+            margin: 0 5px;
+            height: 25px;
+            line-height: 25px;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <label for="nam">商品名称：</label><input type="text" id="nam"><span></span><br>
+    <label for="style">商品类别：</label><select name="style" id="style">
+    <option value="">优选水果</option>
+    <option value="">卤味熟食</option>
+    <option value="">酒水饮料</option>
+    <option value="">休闲零食</option>
+</select><span></span><br>
+    <label for="history">商品原价：</label><input type="text" id="history"><span id="history-span"></span><br>
+    <label for="price">商品现价：</label><input type="text" id="price"><span></span><br>
+    <label for="stock">库存数量：</label><input type="text" id="stock"><span></span><br>
+    <label for="red">是否标红：</label>
+    <input type="radio" name="red" class="red" value="是" id="red">是
+    <input type="radio" name="red" class="red" value="否" checked>否<span></span><br>
+    <button>提交信息</button>
+    <div class="a">
+        <a href="javascript:" class="anni">全部</a>
+        <a href="javascript:" class="anni">优选水果</a>
+        <a href="javascript:" class="anni">卤味熟食</a>
+        <a href="javascript:" class="anni">酒水饮料</a>
+        <a href="javascript:" class="anni">休闲零食</a>
+    </div>
+    <table class="tab">
+        <tr class="first">
+            <td>商品名称</td>
+            <td>商品类别</td>
+            <td style="text-decoration: none">原价</td>
+            <td>现价</td>
+            <td>库存</td>
+            <td>是否标红</td>
+            <td>删除</td>
+        </tr>
+        <!--<tr>-->
+        <!--<td>羊头</td>-->
+        <!--<td>卤味熟食</td>-->
+        <!--<td>￥32.00</td>-->
+        <!--<td>￥23.00</td>-->
+        <!--<td>12</td>-->
+        <!--<td>false</td>-->
+        <!--<td><a href="">删除</a></td>-->
+        <!--</tr>-->
+    </table>
+</div>
+<script src="./jquery.min.js"></script>
+<script>
+    var histor, pric, stoc, nam, bn, delet, table, inputs, opt, btno
+    init()
+
+    function init() {
+        inputs = document.querySelectorAll("input");
+        sty = document.getElementById("style");
+        histor = document.querySelector("#history");
+        pric = document.querySelector("#price");
+        stoc = document.querySelector("#stock");
+        nam = document.querySelector("#nam");
+        bn = document.querySelector("button");
+        tab = document.querySelector("table");
+        opt = document.querySelector("option");
+        box = document.querySelector(".box");
+        red = document.querySelector(".red");
+        first = document.querySelector(".first");
+        btno = document.querySelectorAll(".anni");
+
+        histor.addEventListener("blur", blurHandler);
+        pric.addEventListener("blur", blurHandler);
+        stoc.addEventListener("blur", blurHandler);
+        nam.addEventListener("blur", namHandler);
+        bn.addEventListener("click", clickHandler);
+//        btno.addEventListener("click",clickbtnoHandler)
+
+    }
+
+    //    判断是否有localhostorge存在
+    hostorage()
+
+    function hostorage() {
+        const res = localStorage.getItem('data')
+        var res1 = JSON.parse(res)
+//    console.log(res1)
+
+        let str = ''
+        if (res) {
+            for (var j = 0; j < res1.length; j++) {
+                str = str + "<tr>"
+                for (var h = 0; h < res1[j].length; h++) {
+                    str += '<td>' + res1[j][h] + '</td>'
+                }
+                str = str + "</tr>"
+            }
+        }
+        $('.tab').append(str)
+
+//        if (td.textContent === "删除") {
+//            td.addEventListener("click", deletedHandler)
+//
+//            function deletedHandler(e) {
+//                this.parentElement.remove()
+////                    localStorage.removeItem('data')
+//            }
+//        }
+    }
+
+    //    正则验证价格和数量
+    function blurHandler(e) {
+        if (/^[1-9][0-9]{0,9}$/g.test(this.value)) {
+            this.nextElementSibling.textContent = "输入正确";
+            this.nextElementSibling.style.color = "green";
+        } else {
+            this.nextElementSibling.textContent = "输入错误";
+            this.nextElementSibling.style.color = "red";
+        }
+    };
+
+    //    正则验证商品名
+    function namHandler(e) {
+        if (this.value) {
+            this.nextElementSibling.textContent = "输入正确";
+            this.nextElementSibling.style.color = "green";
+        } else {
+            this.nextElementSibling.textContent = "输入错误";
+            this.nextElementSibling.style.color = "red";
+        }
+    }
+
+    //    提交
+
+
+    var arr1 = []
+
+    function clickHandler() {
+        if (histor.value == "" || pric.value == "" || stoc.value == "" || nam.value == "") {
+            return;
+        } else (histor.nextElementSibling.textContent === "输入正确" && pric.nextElementSibling.textContent === "输入正确" && stoc.nextElementSibling.textContent === "输入正确" && nam.nextElementSibling.textContent === "输入正确")
+        {
+//        获取option值
+            var index = sty.selectedIndex;
+            sty.options[index].value;
+            styl = sty.options[index].text;
+
+//      获取单选值
+            getSex()
+
+            function getSex() {
+                var value = "";
+                var radio = document.getElementsByName("red");
+                for (var i = 0; i < radio.length; i++) {
+                    if (radio[i].checked == true) {
+                        rado = radio[i].value;
+                        break;
+                    }
+                }
+            }
+
+//        添加到localstorage
+            var arr = [nam.value, styl, histor.value, pric.value, stoc.value, rado, "删除"]
+            arr1.push(arr)
+//            localStorage.setItem('data', JSON.stringify(arr1))
+            localStorage.data = JSON.stringify(arr1)
+
+//        添加到表格
+            var tr = document.createElement("tr");
+            for (var k = 0; k < arr.length; k++) {
+                var td = document.createElement("td");
+                td.textContent = arr[k]
+                tr.appendChild(td);
+                tab.appendChild(tr);
+//                if (td.textContent == "是") {
+//                    td.parentElement.firstElementChild.textContent.style.color = 'red'
+//
+//
+////                    $("td").css("color","red")
+//                }
+                nam.value = "";
+                histor.value = "";
+                pric.value = "";
+                stoc.value = "";
+            }
+        }
+//                判断是否标红
+//        for(var g=0;g<td.length;g++){
+//
+//        }
+
+//            删除函数
+        if (td.textContent === "删除") {
+            td.addEventListener("click", deletedHandler)
+
+            function deletedHandler(e) {
+                this.parentElement.remove()
+//                    localStorage.removeItem('data')
+            }
+        }
+    }
+</script>
+
+
+<script>
+    $(".anni").click(function (e) {
+        $(e.target).css("color", "red")
+            .siblings().css("color", "blue")
+    });
+    $(".anni").click(function (e) {
+        console.log(e.target.textContent)
+    })
+</script>
+
+</body>
+</html>
